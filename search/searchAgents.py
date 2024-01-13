@@ -399,7 +399,7 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     for i in range(4):
         if not areCornersVisited[i]:
             distance = util.manhattanDistance(currentPosition, corners[i])
-            h += distance
+            h = max(h,distance)
 
     return h
 
@@ -501,7 +501,7 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
 
     for foodPosition in foodPositions:
         distance = mazeDistance(position, foodPosition, problem.startingGameState)
-        h += distance
+        h = max(h, distance)
 
     return h
 

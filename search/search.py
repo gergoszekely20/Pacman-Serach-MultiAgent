@@ -93,18 +93,18 @@ def depthFirstSearch(problem: SearchProblem):
     frontier.push((problem.getStartState(), []))
 
     reached = set()
-    reached.add(problem.getStartState())
 
     while not frontier.isEmpty():
 
         state, moves = frontier.pop()
 
-        for successorState, direction, cost in problem.getSuccessors(state):
-            if problem.isGoalState(successorState):
-                return moves + [direction]
+        if state not in reached:
+            reached.add(state)
 
-            if successorState not in reached:
-                reached.add(successorState)
+            if problem.isGoalState(state):
+                return moves
+
+            for successorState, direction, cost in problem.getSuccessors(state):
                 frontier.push((successorState, moves + [direction]))
 
     return []
@@ -116,18 +116,18 @@ def breadthFirstSearch(problem: SearchProblem):
     frontier.push((problem.getStartState(), []))
 
     reached = set()
-    reached.add(problem.getStartState())
 
     while not frontier.isEmpty():
 
         state, moves = frontier.pop()
 
-        for successorState, direction, cost in problem.getSuccessors(state):
-            if problem.isGoalState(successorState):
-                return moves + [direction]
+        if state not in reached:
+            reached.add(state)
 
-            if successorState not in reached:
-                reached.add(successorState)
+            if problem.isGoalState(state):
+                return moves
+
+            for successorState, direction, cost in problem.getSuccessors(state):
                 frontier.push((successorState, moves + [direction]))
 
     return []
@@ -139,21 +139,22 @@ def uniformCostSearch(problem: SearchProblem):
     frontier.push((problem.getStartState(), [], 0), 0)
 
     reached = set()
-    reached.add(problem.getStartState())
 
     while not frontier.isEmpty():
 
         state, moves, cost = frontier.pop()
 
-        for successorState, direction, successorCost in problem.getSuccessors(state):
-            if problem.isGoalState(successorState):
-                return moves + [direction]
+        if state not in reached:
+            reached.add(state)
 
-            if successorState not in reached:
-                reached.add(successorState)
+            if problem.isGoalState(state):
+                return moves
+
+            for successorState, direction, successorCost in problem.getSuccessors(state):
                 frontier.push((successorState, moves + [direction], cost + successorCost), cost + successorCost)
 
     return []
+
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
@@ -165,25 +166,25 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     frontier = util.PriorityQueue()
-    frontier.push((problem.getStartState(), [], 0), 0)
+    frontier.push((problem.getStartState(), [], 0), heuristic(problem.getStartState(), problem))
 
     reached = set()
-    reached.add(problem.getStartState())
 
     while not frontier.isEmpty():
 
         state, moves, cost = frontier.pop()
 
-        for successorState, direction, successorCost in problem.getSuccessors(state):
-            if problem.isGoalState(successorState):
-                return moves + [direction]
+        if state not in reached:
+            reached.add(state)
 
-            if successorState not in reached:
-                reached.add(successorState)
+            if problem.isGoalState(state):
+                return moves
+
+            for successorState, direction, successorCost in problem.getSuccessors(state):
                 g = cost + successorCost
                 h = heuristic(successorState, problem)
                 f = g + h
-                frontier.push((successorState, moves + [direction], f), f)
+                frontier.push((successorState, moves + [direction], g), f)
 
     return []
 
